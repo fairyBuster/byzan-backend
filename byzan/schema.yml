@@ -1,0 +1,1735 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: 0.0.0
+paths:
+  /api/auth/login/:
+    post:
+      operationId: api_auth_login_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/auth/profile/:
+    get:
+      operationId: api_auth_profile_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+    put:
+      operationId: api_auth_profile_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Profile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Profile'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+    patch:
+      operationId: api_auth_profile_partial_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProfile'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+  /api/auth/register/:
+    post:
+      operationId: api_auth_register_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          description: No response body
+  /api/certificates/{code}/verify/:
+    get:
+      operationId: api_certificates_verify_retrieve
+      summary: Verifikasi sertifikat by code
+      parameters:
+      - in: path
+        name: code
+        schema:
+          type: string
+        required: true
+      tags:
+      - Certificates
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/courses/:
+    get:
+      operationId: api_courses_retrieve
+      summary: List semua kursus
+      tags:
+      - Courses
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_courses_create
+      summary: Tambah kursus (admin)
+      tags:
+      - Courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Course'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Course'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/courses/{course_id}/certificate/:
+    get:
+      operationId: api_courses_certificate_retrieve
+      summary: Sertifikat kursus (jika sudah selesai)
+      parameters:
+      - in: path
+        name: course_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Certificates
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/courses/{course_id}/comments/:
+    get:
+      operationId: api_courses_comments_list
+      summary: List komentar course (login)
+      parameters:
+      - in: path
+        name: course_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Courses
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseComment'
+          description: ''
+    post:
+      operationId: api_courses_comments_create
+      summary: Tambah komentar course (login)
+      parameters:
+      - in: path
+        name: course_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseComment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseComment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseComment'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseComment'
+          description: ''
+  /api/courses/{course_id}/reviews/:
+    get:
+      operationId: api_courses_reviews_list
+      summary: List review course
+      parameters:
+      - in: path
+        name: course_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Courses
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseReview'
+          description: ''
+    post:
+      operationId: api_courses_reviews_create
+      summary: Buat/Update review course (harus sudah beli)
+      parameters:
+      - in: path
+        name: course_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseReview'
+          description: ''
+  /api/courses/{id}/:
+    get:
+      operationId: api_courses_retrieve_2
+      summary: Detail kursus + chapters + lessons
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Courses
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: api_courses_update
+      summary: Update kursus (admin)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Courses
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/courses/buy/:
+    post:
+      operationId: api_courses_buy_create
+      summary: Beli kursus — buat transaksi + enrollment
+      tags:
+      - Courses
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/courses/buy/balance/:
+    post:
+      operationId: api_courses_buy_balance_create
+      summary: Beli kursus pakai balance
+      tags:
+      - Courses
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/courses/buy/midtrans/:
+    post:
+      operationId: api_courses_buy_midtrans_create
+      summary: Inisiasi pembelian via Midtrans (pending)
+      tags:
+      - Courses
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/courses/lesson/complete/:
+    post:
+      operationId: api_courses_lesson_complete_create
+      summary: Tandai lesson selesai
+      tags:
+      - Courses
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/courses/lessons/{lesson_id}/questions/:
+    get:
+      operationId: api_courses_lessons_questions_list
+      summary: List Q&A lesson (buyer)
+      parameters:
+      - in: path
+        name: lesson_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Lessons
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonQuestion'
+          description: ''
+    post:
+      operationId: api_courses_lessons_questions_create
+      summary: Tanya di lesson (buyer)
+      parameters:
+      - in: path
+        name: lesson_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Lessons
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonQuestion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LessonQuestion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LessonQuestion'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonQuestion'
+          description: ''
+  /api/courses/lessons/questions/{question_id}/answer/:
+    patch:
+      operationId: api_courses_lessons_questions_answer_partial_update
+      summary: Jawab pertanyaan lesson (author/admin)
+      parameters:
+      - in: path
+        name: question_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Lessons
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLessonAnswer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLessonAnswer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLessonAnswer'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonQuestion'
+          description: ''
+  /api/courses/my/:
+    get:
+      operationId: api_courses_my_retrieve
+      summary: Kursus yang sudah saya beli
+      tags:
+      - Courses
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/courses/my/lessons/:
+    get:
+      operationId: api_courses_my_lessons_retrieve
+      summary: List lesson untuk course yang sudah dibeli
+      tags:
+      - Courses
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/courses/my/lessons/{course_id}/:
+    get:
+      operationId: api_courses_my_lessons_retrieve_2
+      summary: List lesson untuk course yang sudah dibeli
+      parameters:
+      - in: path
+        name: course_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Courses
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/courses/transactions/:
+    get:
+      operationId: api_courses_transactions_retrieve
+      summary: Riwayat transaksi saya
+      tags:
+      - Transactions
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/posts/:
+    get:
+      operationId: api_posts_list
+      summary: List semua artikel yang published
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+        description: Filter by slug kategori
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Cari by judul
+      tags:
+      - Posts
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostList'
+          description: ''
+    post:
+      operationId: api_posts_create
+      summary: Buat artikel baru (admin)
+      tags:
+      - Posts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostWrite'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDetail'
+          description: ''
+  /api/posts/{slug}/:
+    get:
+      operationId: api_posts_retrieve
+      summary: Detail artikel by slug
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - Posts
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDetail'
+          description: ''
+    put:
+      operationId: api_posts_update
+      summary: Update artikel (admin)
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - Posts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostWrite'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDetail'
+          description: ''
+    delete:
+      operationId: api_posts_destroy
+      summary: Hapus artikel (admin)
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - Posts
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/posts/{slug}/comments/:
+    get:
+      operationId: api_posts_comments_list
+      summary: List komentar & bintang artikel (login)
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - Posts
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostComment'
+          description: ''
+    post:
+      operationId: api_posts_comments_create
+      summary: Tambah/Update komentar & bintang artikel (login)
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - Posts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostComment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostComment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostComment'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostComment'
+          description: ''
+  /api/posts/admin-all/:
+    get:
+      operationId: api_posts_admin_all_list
+      description: Khusus admin — lihat semua post termasuk draft
+      summary: Semua artikel termasuk draft (admin)
+      tags:
+      - Posts
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostList'
+          description: ''
+  /api/posts/author/{author_id}/:
+    get:
+      operationId: api_posts_author_list
+      summary: List artikel published by author
+      parameters:
+      - in: path
+        name: author_id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Cari by judul
+      tags:
+      - Posts
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostList'
+          description: ''
+  /api/posts/categories/:
+    get:
+      operationId: api_posts_categories_list
+      summary: List semua kategori
+      tags:
+      - Posts
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+          description: ''
+    post:
+      operationId: api_posts_categories_create
+      summary: Tambah kategori (admin)
+      tags:
+      - Posts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Category'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Category'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+  /api/posts/comments/{comment_id}/replies/:
+    post:
+      operationId: api_posts_comments_replies_create
+      summary: Balas komentar artikel (login)
+      parameters:
+      - in: path
+        name: comment_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Posts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCommentReply'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostCommentReply'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostCommentReply'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostCommentReply'
+          description: ''
+  /api/posts/id/{id}/:
+    get:
+      operationId: api_posts_id_retrieve
+      summary: Detail artikel by id
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Posts
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDetail'
+          description: ''
+  /api/posts/id/{id}/comments/:
+    get:
+      operationId: api_posts_id_comments_list
+      summary: List komentar & bintang artikel by id (login)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Posts
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostComment'
+          description: ''
+    post:
+      operationId: api_posts_id_comments_create
+      summary: Tambah/Update komentar & bintang artikel by id (login)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Posts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostComment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostComment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostComment'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostComment'
+          description: ''
+  /api/schema/:
+    get:
+      operationId: api_schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+components:
+  schemas:
+    Author:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          maxLength: 30
+        email:
+          type: string
+          format: email
+          maxLength: 254
+      required:
+      - email
+      - id
+      - username
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+      required:
+      - id
+      - name
+    Chapter:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        lessons:
+          type: array
+          items:
+            $ref: '#/components/schemas/Lesson'
+          readOnly: true
+      required:
+      - id
+      - lessons
+      - title
+    Course:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        thumbnail:
+          type: string
+          format: uri
+          nullable: true
+        thumbnail_url:
+          type: string
+          readOnly: true
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        is_published:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        chapters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Chapter'
+          readOnly: true
+        total_lessons:
+          type: string
+          readOnly: true
+        is_enrolled:
+          type: string
+          readOnly: true
+        progress_percent:
+          type: string
+          readOnly: true
+        instructor:
+          type: string
+          readOnly: true
+        buyers_count:
+          type: string
+          readOnly: true
+        rating_avg:
+          type: string
+          readOnly: true
+        rating_count:
+          type: string
+          readOnly: true
+      required:
+      - buyers_count
+      - chapters
+      - created_at
+      - description
+      - id
+      - instructor
+      - is_enrolled
+      - price
+      - progress_percent
+      - rating_avg
+      - rating_count
+      - thumbnail_url
+      - title
+      - total_lessons
+    CourseComment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        course:
+          type: integer
+          readOnly: true
+        user:
+          type: string
+          readOnly: true
+        comment:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - comment
+      - course
+      - created_at
+      - id
+      - user
+    CourseReview:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        course:
+          type: integer
+          readOnly: true
+        user:
+          type: string
+          readOnly: true
+        rating:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - course
+      - created_at
+      - id
+      - rating
+      - updated_at
+      - user
+    GenderEnum:
+      enum:
+      - male
+      - female
+      type: string
+      description: |-
+        * `male` - Male
+        * `female` - Female
+    Lesson:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        youtube_url:
+          type: string
+          format: uri
+          maxLength: 200
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        duration_seconds:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        is_completed:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - is_completed
+      - title
+      - youtube_url
+    LessonQuestion:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        lesson:
+          type: integer
+          readOnly: true
+        user:
+          type: string
+          readOnly: true
+        question:
+          type: string
+        answer:
+          type: string
+          readOnly: true
+        answered_by:
+          type: string
+          readOnly: true
+        answered_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - answer
+      - answered_at
+      - answered_by
+      - created_at
+      - id
+      - lesson
+      - question
+      - user
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password
+    PatchedLessonAnswer:
+      type: object
+      properties:
+        answer:
+          type: string
+    PatchedProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        gender:
+          $ref: '#/components/schemas/GenderEnum'
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        email_verified:
+          type: boolean
+          readOnly: true
+        phone:
+          type: string
+          maxLength: 20
+        birthday:
+          type: string
+          format: date
+        country:
+          type: string
+          maxLength: 100
+        address:
+          type: string
+          maxLength: 255
+        city:
+          type: string
+          maxLength: 100
+        instagram_link:
+          type: string
+          format: uri
+          maxLength: 200
+        facebook_link:
+          type: string
+          format: uri
+          maxLength: 200
+        username:
+          type: string
+          readOnly: true
+        full_name:
+          type: string
+          maxLength: 150
+        balance:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+    PostComment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        post:
+          type: integer
+          readOnly: true
+        user:
+          allOf:
+          - $ref: '#/components/schemas/Author'
+          readOnly: true
+        rating:
+          type: integer
+          nullable: true
+        comment:
+          type: string
+        replies:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - post
+      - replies
+      - updated_at
+      - user
+    PostCommentReply:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        comment:
+          type: integer
+          readOnly: true
+        user:
+          allOf:
+          - $ref: '#/components/schemas/Author'
+          readOnly: true
+        message:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - comment
+      - created_at
+      - id
+      - message
+      - user
+    PostDetail:
+      type: object
+      description: Versi lengkap untuk detail — ada content penuh
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 300
+          pattern: ^[-a-zA-Z0-9_]+$
+        excerpt:
+          type: string
+          description: Ringkasan singkat
+        content:
+          type: string
+        thumbnail:
+          type: string
+          format: uri
+          nullable: true
+        thumbnail_url:
+          type: string
+          readOnly: true
+        author:
+          allOf:
+          - $ref: '#/components/schemas/Author'
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/Category'
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        views_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+        rating_avg:
+          type: string
+          readOnly: true
+        rating_count:
+          type: string
+          readOnly: true
+      required:
+      - author
+      - category
+      - content
+      - created_at
+      - id
+      - rating_avg
+      - rating_count
+      - thumbnail_url
+      - title
+      - updated_at
+    PostList:
+      type: object
+      description: Versi ringkas untuk list — tanpa full content
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 300
+          pattern: ^[-a-zA-Z0-9_]+$
+        excerpt:
+          type: string
+          description: Ringkasan singkat
+        thumbnail:
+          type: string
+          format: uri
+          nullable: true
+        thumbnail_url:
+          type: string
+          readOnly: true
+        author:
+          allOf:
+          - $ref: '#/components/schemas/Author'
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/Category'
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        views_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        rating_avg:
+          type: string
+          readOnly: true
+        rating_count:
+          type: string
+          readOnly: true
+      required:
+      - author
+      - category
+      - created_at
+      - id
+      - rating_avg
+      - rating_count
+      - thumbnail_url
+      - title
+    PostWrite:
+      type: object
+      description: Untuk create/update oleh admin
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        excerpt:
+          type: string
+          description: Ringkasan singkat
+        content:
+          type: string
+        thumbnail:
+          type: string
+          format: uri
+          nullable: true
+        category:
+          type: integer
+          nullable: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+      required:
+      - content
+      - title
+    Profile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        gender:
+          $ref: '#/components/schemas/GenderEnum'
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        email_verified:
+          type: boolean
+          readOnly: true
+        phone:
+          type: string
+          maxLength: 20
+        birthday:
+          type: string
+          format: date
+        country:
+          type: string
+          maxLength: 100
+        address:
+          type: string
+          maxLength: 255
+        city:
+          type: string
+          maxLength: 100
+        instagram_link:
+          type: string
+          format: uri
+          maxLength: 200
+        facebook_link:
+          type: string
+          format: uri
+          maxLength: 200
+        username:
+          type: string
+          readOnly: true
+        full_name:
+          type: string
+          maxLength: 150
+        balance:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+      required:
+      - balance
+      - birthday
+      - city
+      - country
+      - email
+      - email_verified
+      - first_name
+      - gender
+      - id
+      - last_name
+      - phone
+      - username
+    Register:
+      type: object
+      properties:
+        full_name:
+          type: string
+          maxLength: 150
+        username:
+          type: string
+          maxLength: 30
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        phone:
+          type: string
+          maxLength: 20
+        password:
+          type: string
+          writeOnly: true
+        confirm_password:
+          type: string
+          writeOnly: true
+      required:
+      - confirm_password
+      - email
+      - full_name
+      - password
+      - phone
+      - username
+    StatusEnum:
+      enum:
+      - draft
+      - published
+      type: string
+      description: |-
+        * `draft` - Draft
+        * `published` - Published
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid

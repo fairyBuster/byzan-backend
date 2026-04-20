@@ -1,0 +1,77 @@
+BYZAN (Backend + Caddy) - Panduan Deploy Docker
+
+Ringkas
+- Jalankan semua service: docker compose -f docker-compose.yml up -d --build
+- Pertama kali jalan (volume postgres masih kosong): database akan dibuat dari env dan otomatis import byzan_db.sql
+- Tiap kali container web start: otomatis migrate + collectstatic lalu start gunicorn
+- Caddy listen di port 80 (HTTP). SSL dari Cloudflare.
+- Main domain byzanedu.com di-proxy ke FRONTEND_UPSTREAM (default host.docker.internal:3000)
+
+Prasyarat
+- Docker + Docker Compose
+- Cloudflare DNS record byzanedu.com dan www.byzanedu.com = Proxied (orange cloud)
+- Jika frontend (Vue) jalan di host: pastikan sudah running di http://localhost:3000
+
+1) Siapkan .env
+File .env dipakai oleh service web/db/caddy.
+Minimal variabel yang dipakai:
+- SECRET_KEY=... (WAJIB ganti untuk production)
+- DEBUG=0
+- ALLOWED_HOSTS=byzanedu.com,api.byzanedu.com,localhost,127.0.0.1
+
+- DB_NAME=byzan_db
+- DB_USER=postgres
+- DB_PASSWORD=...
+- DB_HOST=pgbouncer
+- DB_PORT=6432
+- DB_CONN_MAX_AGE=0
+
+Opsional:
+- CORS_ORIGIN_REGEX=^https?://(localhost|127\.0\.0\.1)(:\d+)?$
+- FRONTEND_UPSTREAM=host.docker.internal:3000
+
+Catatan:
+- File certs.pem dan key.pem sudah di-ignore. Jangan commit key ke repo.
+
+2) Jalankan (fresh install)
+Dari folder c:\byzam-api\byzan
+1. docker compose up -d --build
+2. Cek status: docker compose ps
+3. Cek log: docker compose logs -f --tail=200 web
+
+Yang terjadi otomatis saat pertama kali:
+- db: bikin database sesuai POSTGRES_DB/USER/PASSWORD (diambil dari DB_NAME/DB_USER/DB_PASSWORD)
+- db: import schema/data dari byzan_db.sql (hanya sekali, saat volume masih kosong)
+- web: python manage.py migrate --noinput --fake-initial
+- web: python manage.py collectstatic --noinput
+- web: start gunicorn di 0.0.0.0:8000
+- caddy: expose port 80 dan route:
+  - http://byzanedu.com, http://www.byzanedu.com -> FRONTEND_UPSTREAM
+  - /api/*, /static/*, /media/* -> backend (web:8000)
+
+3) Kalau database sudah pernah jalan (volume sudah terisi)
+Postgres tidak akan re-import byzan_db.sql otomatis.
+
+Opsi A (reset total, semua data hilang):
+- docker compose down -v
+- docker compose up -d --build
+
+Opsi B (import manual tanpa hapus volume):
+- Pastikan db sudah running
+- Jalankan psql import ke database yang sesuai (sesuaikan nama DB/user):
+  docker compose exec -T db psql -U "$DB_USER" -d "$DB_NAME" < byzan_db.sql
+
+4) Setelan Cloudflare (karena SSL dari Cloudflare)
+Jika origin (Caddy) hanya HTTP:80, set Cloudflare mode:
+- SSL/TLS encryption mode: Flexible
+
+Jika nanti mau Cloudflare Full/Strict (origin HTTPS), perlu ubah Caddy supaya serve 443 dengan certs.pem + key.pem.
+
+5) Update / redeploy
+- Pull update code
+- docker compose up -d --build
+
+Troubleshooting cepat
+- Backend healthcheck: http://127.0.0.1:8080/health (port host 8080 -> web:8000)
+- Caddy listen: http://127.0.0.1/ (port 80)
+- Lihat error pgbouncer: docker compose logs -f --tail=200 pgbouncer
