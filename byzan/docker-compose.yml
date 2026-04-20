@@ -69,10 +69,11 @@ services:
       - .env
     environment:
       - APP_DOMAIN=${APP_DOMAIN}
-      - CORS_ORIGIN_REGEX=${CORS_ORIGIN_REGEX:-^https?://(localhost|127\.0\.0\.1)(:\d+)?$}
+      - CORS_ORIGIN_REGEX=${CORS_ORIGIN_REGEX:-^https?://(localhost|127\\.0\\.0\\.1|byzanedu\\.com|www\\.byzanedu\\.com)(:\\d+)?$}
       - FRONTEND_UPSTREAM=${FRONTEND_UPSTREAM:-host.docker.internal:3000}
     ports:
       - "80:80"
+      - "443:443"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:

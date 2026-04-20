@@ -17,14 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
+from django.http import HttpResponse
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from django.conf import settings
 from django.conf.urls.static import static
 from courses.views import CertificateVerifyView
 
+def health(request):
+    return HttpResponse("ok")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("health", health, name="health"),
     path("api/auth/", include("accounts.urls")),
     path("api/courses/", include("courses.urls")),
     path('api/posts/', include('posts.urls')),

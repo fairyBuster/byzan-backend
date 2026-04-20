@@ -89,7 +89,11 @@
     }
 }
 
-http://byzanedu.com, http://www.byzanedu.com {
+api.byzanedu.com {
+    import site_common
+}
+
+byzanedu.com, www.byzanedu.com {
     reverse_proxy {env.FRONTEND_UPSTREAM} {
         header_up Host {http.request.host}
         header_up X-Forwarded-Proto https
@@ -98,8 +102,4 @@ http://byzanedu.com, http://www.byzanedu.com {
         header_up X-Request-ID {http.request.id}
     }
     encode gzip zstd
-}
-
-:80 {
-    import site_common
 }

@@ -1,2 +1,5 @@
-venv/
-.venv/
+.env
+.env.*
+byzan/.env
+*.pem
+byzan/*.pem

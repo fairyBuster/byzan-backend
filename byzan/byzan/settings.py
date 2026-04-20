@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-6_fln1(jw@p#&jowme!cn#9kx9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "True").lower() in ("1", "true", "yes", "on")
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "byzan-backend.horizonberita.com", "byzan.horizonberita.com"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "byzanedu.com", "www.byzanedu.com", "api.byzanedu.com"]
 allowed_hosts_env = os.getenv("ALLOWED_HOSTS")
 if allowed_hosts_env:
     ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_env.split(",") if h.strip()]
@@ -46,8 +46,6 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://byzan-backend.horizonberita.com",
-    "https://byzan.horizonberita.com"
     "https://byzanedu.com",
     "https://api.byzanedu.com"
 ]
@@ -55,8 +53,6 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://byzan-backend.horizonberita.com",
-    "https://byzan.horizonberita.com",
     "https://byzanedu.com",
     "https://api.byzanedu.com"
 ]
@@ -124,9 +120,9 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("DB_NAME", "byzan_db"),
         "USER": os.getenv("DB_USER", "postgres"),
-        "PASSWORD": os.getenv("DB_PASSWORD", "fairyBuster555."),
-        "HOST": os.getenv("DB_HOST", "localhost"),
-        "PORT": os.getenv("DB_PORT", "5432"),
+        "PASSWORD": os.getenv("DB_PASSWORD", ""),
+        "HOST": os.getenv("DATABASE_HOST") or os.getenv("DB_HOST", "localhost"),
+        "PORT": os.getenv("DATABASE_PORT") or os.getenv("DB_PORT", "5432"),
         "CONN_MAX_AGE": int(os.getenv("DB_CONN_MAX_AGE", "0")),
     }
 }

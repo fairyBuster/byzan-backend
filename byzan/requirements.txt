@@ -38,7 +38,7 @@ decorator==5.2.1
 defusedxml==0.7.1
 diff-match-patch==20241021
 distlib==0.4.0
-Django==5.0.6
+Django==5.2.13
 django-admin-interface==0.26.0
 django-anymail==10.2
 django-appconf==1.1.0
@@ -71,7 +71,7 @@ django-static-precompiler==2.4
 django-storages==1.14.2
 django-stubs==4.2.7
 django-stubs-ext==5.2.7
-django-timezone-field==6.0.1
+django-timezone-field==7.2.1
 django-user-agents==0.4.0
 django-waffle==4.1.0
 django-webhook==0.0.15
