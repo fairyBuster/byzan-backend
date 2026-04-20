@@ -1,4 +1,5 @@
 .env
 certs.pem
 key.pem
-venv
+venv/
+.venv/
