@@ -3,3 +3,5 @@
 byzan/.env
 *.pem
 byzan/*.pem
+.venv
+byzan/.venv

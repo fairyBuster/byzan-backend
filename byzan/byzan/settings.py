@@ -10,11 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
@@ -118,9 +121,9 @@ WSGI_APPLICATION = "byzan.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME", "byzan_db"),
-        "USER": os.getenv("DB_USER", "postgres"),
-        "PASSWORD": os.getenv("DB_PASSWORD", ""),
+        "NAME": os.getenv("DATABASE_NAME") or os.getenv("DB_NAME", "byzan_db"),
+        "USER": os.getenv("DATABASE_USER") or os.getenv("DB_USER", "postgres"),
+        "PASSWORD": os.getenv("DATABASE_PASSWORD") or os.getenv("DB_PASSWORD", ""),
         "HOST": os.getenv("DATABASE_HOST") or os.getenv("DB_HOST", "localhost"),
         "PORT": os.getenv("DATABASE_PORT") or os.getenv("DB_PORT", "5432"),
         "CONN_MAX_AGE": int(os.getenv("DB_CONN_MAX_AGE", "0")),
