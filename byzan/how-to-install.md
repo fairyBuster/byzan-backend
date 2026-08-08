@@ -44,12 +44,12 @@ SECRET_KEY=ubah_ke_secret_produksi
 DEBUG=False
 
 # Database
-DATABASE_NAME=database
-DATABASE_USER=postgres
-DATABASE_PASSWORD=ubah_password_db
-DATABASE_HOST=db
-DATABASE_PORT=5432
-DATABASE_SSLMODE=disable
+DB_NAME=database
+DB_USER=postgres
+DB_PASSWORD=ubah_password_db
+DB_HOST=db
+DB_PORT=5432
+DB_SSLMODE=disable
 
 # Domain (opsional)
 APP_DOMAIN=example.com
