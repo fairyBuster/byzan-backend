@@ -1,8 +1,8 @@
-import courses.models
 import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
 
+import courses.models
 
 class Migration(migrations.Migration):
     dependencies = [

@@ -1,17 +1,8 @@
 from django.contrib import admin
 
-from .models import (
-    Chapter,
-    Course,
-    CourseCertificate,
-    CourseComment,
-    CourseReview,
-    Enrollment,
-    Lesson,
-    LessonProgress,
-    LessonQuestion,
-    Transaction,
-)
+from .models import (Chapter, Course, CourseCertificate, CourseComment,
+                     CourseReview, Enrollment, Lesson, LessonProgress,
+                     LessonQuestion, Transaction)
 
 
 class ChapterInline(admin.TabularInline):
