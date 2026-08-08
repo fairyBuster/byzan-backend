@@ -1,0 +1,117 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # --- CI: Lint & Test ---
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DEBUG: "1"
+      SECRET_KEY: github-actions-test-key
+      DB_NAME: byzan_test
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: localhost
+      DB_PORT: "5432"
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: byzan_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          cd byzan
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run flake8
+        run: |
+          cd byzan
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Run isort check
+        run: |
+          cd byzan
+          isort . --check-only --diff
+
+      - name: Run black check
+        run: |
+          cd byzan
+          black . --check --diff
+
+      - name: Run Django tests
+        run: |
+          cd byzan
+          python manage.py test
+
+  # --- CD: Build & Push Docker Image ---
+  build:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./byzan
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+  # --- CD: Deploy to VPS ---
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            docker compose pull web
+            docker compose up -d --remove-orphans
+            docker image prune -f
