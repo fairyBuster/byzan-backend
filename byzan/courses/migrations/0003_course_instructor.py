@@ -1,6 +1,6 @@
-from django.db import migrations, models
 import django.db.models.deletion
 from django.conf import settings
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -13,6 +13,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="course",
             name="instructor",
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name="courses_instructed", to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="courses_instructed",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

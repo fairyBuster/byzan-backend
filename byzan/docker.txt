@@ -75,3 +75,11 @@ Troubleshooting cepat
 - Backend healthcheck: http://127.0.0.1:8080/health (port host 8080 -> web:8000)
 - Caddy listen: http://127.0.0.1/ (port 80)
 - Lihat error pgbouncer: docker compose logs -f --tail=200 pgbouncer
+
+
+
+
+
+
+
+xxxxxxxxxxxxxxxx

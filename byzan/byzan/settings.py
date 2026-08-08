@@ -24,25 +24,32 @@ load_dotenv(BASE_DIR / ".env")
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-6_fln1(jw@p#&jowme!cn#9kx93gf+=_d2$-snn0fp+*x35i9!")
+SECRET_KEY = os.getenv(
+    "SECRET_KEY", "django-insecure-6_fln1(jw@p#&jowme!cn#9kx93gf+=_d2$-snn0fp+*x35i9!"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "True").lower() in ("1", "true", "yes", "on")
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "byzanedu.com", "www.byzanedu.com", "api.byzanedu.com"]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "byzanedu.com",
+    "www.byzanedu.com",
+    "api.byzanedu.com",
+]
 allowed_hosts_env = os.getenv("ALLOWED_HOSTS")
 if allowed_hosts_env:
     ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_env.split(",") if h.strip()]
 
 
-
 # Application definition
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'courses.middleware.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "courses.middleware.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
     ],
 }
 
@@ -50,14 +57,14 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://byzanedu.com",
-    "https://api.byzanedu.com"
+    "https://api.byzanedu.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://byzanedu.com",
-    "https://api.byzanedu.com"
+    "https://api.byzanedu.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -79,9 +86,6 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "courses",
     "posts",
-    
-    
-    
 ]
 
 MIDDLEWARE = [

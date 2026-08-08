@@ -1,6 +1,6 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.timezone import now
-from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
@@ -10,7 +10,9 @@ class User(AbstractUser):
     ]
 
     email = models.EmailField(unique=True)  # Email unik untuk setiap pengguna
-    username = models.CharField(max_length=30, unique=True)  # Username unik untuk setiap pengguna
+    username = models.CharField(
+        max_length=30, unique=True
+    )  # Username unik untuk setiap pengguna
     full_name = models.CharField(max_length=150, blank=True)
     phone = models.CharField(max_length=20, blank=True)
     address = models.CharField(max_length=255, blank=True)
@@ -30,5 +32,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
 
 # Create your models here.

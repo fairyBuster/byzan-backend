@@ -172,3 +172,11 @@ docker compose up -d --build
 ```
 - Jika web tidak bisa konek DB dan error `could not translate host name "db"` atau `pgbouncer`: pastikan semua service dijalankan via `docker compose up -d` (jangan `docker run` terpisah).
 - Jika build error terkait dependency native: gunakan base image Python slim atau pastikan paket build (gcc, libpq-dev) sudah terinstall (sudah disiapkan di Dockerfile).
+
+
+
+
+
+
+
+..........

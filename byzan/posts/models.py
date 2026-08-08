@@ -1,7 +1,10 @@
-from django.db import models
-from accounts.models import User
-from django.utils.text import slugify
 import uuid
+
+from django.db import models
+from django.utils.text import slugify
+
+from accounts.models import User
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -18,24 +21,26 @@ class Category(models.Model):
 
 class Post(models.Model):
     STATUS_CHOICES = [
-        ('draft',     'Draft'),
-        ('published', 'Published'),
+        ("draft", "Draft"),
+        ("published", "Published"),
     ]
-    author      = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
-    category    = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='posts')
-    title       = models.CharField(max_length=255)
-    slug        = models.SlugField(unique=True, blank=True, max_length=300)
-    excerpt     = models.TextField(blank=True, help_text='Ringkasan singkat')
-    content     = models.TextField()
-    thumbnail   = models.ImageField(upload_to='posts/thumbnails/', blank=True, null=True)
-    status      = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts"
+    )
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True, max_length=300)
+    excerpt = models.TextField(blank=True, help_text="Ringkasan singkat")
+    content = models.TextField()
+    thumbnail = models.ImageField(upload_to="posts/thumbnails/", blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="draft")
     views_count = models.PositiveIntegerField(default=0)
-    created_at  = models.DateTimeField(auto_now_add=True)
-    updated_at  = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     published_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -48,23 +53,29 @@ class Post(models.Model):
 
 
 class PostComment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_comments')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="post_comments"
+    )
     rating = models.PositiveSmallIntegerField(blank=True, null=True)
     comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ['post', 'user']
+        unique_together = ["post", "user"]
 
     def __str__(self):
         return f"{self.post.title} - {self.user.email} - {self.rating}"
 
 
 class PostCommentReply(models.Model):
-    comment = models.ForeignKey(PostComment, on_delete=models.CASCADE, related_name='replies')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_comment_replies')
+    comment = models.ForeignKey(
+        PostComment, on_delete=models.CASCADE, related_name="replies"
+    )
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="post_comment_replies"
+    )
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
