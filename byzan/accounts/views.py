@@ -5,11 +5,12 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 from django.shortcuts import render
 from drf_spectacular.utils import extend_schema
-from posts.models import Post
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from posts.models import Post
 
 from .models import User
 from .serializers import LoginSerializer, ProfileSerializer, RegisterSerializer

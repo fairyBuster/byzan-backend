@@ -1,5 +1,6 @@
-from accounts.models import User
 from rest_framework import serializers
+
+from accounts.models import User
 
 from .models import Category, Post, PostComment, PostCommentReply
 

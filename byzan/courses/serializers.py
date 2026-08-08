@@ -1,17 +1,8 @@
 from rest_framework import serializers
 
-from .models import (
-    Chapter,
-    Course,
-    CourseCertificate,
-    CourseComment,
-    CourseReview,
-    Enrollment,
-    Lesson,
-    LessonProgress,
-    LessonQuestion,
-    Transaction,
-)
+from .models import (Chapter, Course, CourseCertificate, CourseComment,
+                     CourseReview, Enrollment, Lesson, LessonProgress,
+                     LessonQuestion, Transaction)
 
 
 class LessonSerializer(serializers.ModelSerializer):

@@ -9,28 +9,14 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import (
-    Course,
-    CourseCertificate,
-    CourseComment,
-    CourseReview,
-    Enrollment,
-    Lesson,
-    LessonProgress,
-    LessonQuestion,
-    Transaction,
-)
-from .serializers import (
-    CourseCertificateSerializer,
-    CourseCommentSerializer,
-    CourseListSerializer,
-    CourseReviewSerializer,
-    CourseSerializer,
-    LessonAnswerSerializer,
-    LessonQuestionSerializer,
-    LessonSerializer,
-    TransactionSerializer,
-)
+from .models import (Course, CourseCertificate, CourseComment, CourseReview,
+                     Enrollment, Lesson, LessonProgress, LessonQuestion,
+                     Transaction)
+from .serializers import (CourseCertificateSerializer, CourseCommentSerializer,
+                          CourseListSerializer, CourseReviewSerializer,
+                          CourseSerializer, LessonAnswerSerializer,
+                          LessonQuestionSerializer, LessonSerializer,
+                          TransactionSerializer)
 
 
 class CourseListView(APIView):

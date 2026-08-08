@@ -1,4 +1,3 @@
-from accounts.models import User
 from django.utils import timezone
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
@@ -7,15 +6,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from accounts.models import User
+
 from .models import Category, Post, PostComment, PostCommentReply
-from .serializers import (
-    CategorySerializer,
-    PostCommentReplySerializer,
-    PostCommentSerializer,
-    PostDetailSerializer,
-    PostListSerializer,
-    PostWriteSerializer,
-)
+from .serializers import (CategorySerializer, PostCommentReplySerializer,
+                          PostCommentSerializer, PostDetailSerializer,
+                          PostListSerializer, PostWriteSerializer)
 
 
 class PostListView(APIView):

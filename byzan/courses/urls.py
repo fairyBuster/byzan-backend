@@ -1,21 +1,12 @@
 from django.urls import path
 
-from .views import (
-    BuyCourseMidtransInitView,
-    BuyCourseView,
-    BuyCourseWithBalanceView,
-    CourseCertificateView,
-    CourseCommentListCreateView,
-    CourseDetailView,
-    CourseListView,
-    CourseReviewListCreateView,
-    LessonQuestionAnswerView,
-    LessonQuestionListCreateView,
-    MarkLessonDoneView,
-    MyCoursesView,
-    MyLessonsView,
-    MyTransactionView,
-)
+from .views import (BuyCourseMidtransInitView, BuyCourseView,
+                    BuyCourseWithBalanceView, CourseCertificateView,
+                    CourseCommentListCreateView, CourseDetailView,
+                    CourseListView, CourseReviewListCreateView,
+                    LessonQuestionAnswerView, LessonQuestionListCreateView,
+                    MarkLessonDoneView, MyCoursesView, MyLessonsView,
+                    MyTransactionView)
 
 urlpatterns = [
     path("", CourseListView.as_view(), name="course-list"),

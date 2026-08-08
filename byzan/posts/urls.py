@@ -1,16 +1,10 @@
 from django.urls import path
 
-from .views import (
-    AdminPostListView,
-    AuthorPostListView,
-    CategoryListView,
-    PostCommentListCreateByIdView,
-    PostCommentListCreateBySlugView,
-    PostCommentReplyCreateView,
-    PostDetailByIdView,
-    PostDetailView,
-    PostListView,
-)
+from .views import (AdminPostListView, AuthorPostListView, CategoryListView,
+                    PostCommentListCreateByIdView,
+                    PostCommentListCreateBySlugView,
+                    PostCommentReplyCreateView, PostDetailByIdView,
+                    PostDetailView, PostListView)
 
 urlpatterns = [
     path("", PostListView.as_view(), name="post-list"),
