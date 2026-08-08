@@ -122,4 +122,3 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH }}
             docker compose pull web
             docker compose up -d --remove-orphans
-            docker image prune -f
