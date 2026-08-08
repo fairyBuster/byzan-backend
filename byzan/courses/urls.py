@@ -15,6 +15,7 @@ from .views import (
     MyCoursesView,
     MyLessonsView,
     MyTransactionView,
+    midtrans_notification,
 )
 
 urlpatterns = [
@@ -38,6 +39,7 @@ urlpatterns = [
     path("buy/", BuyCourseView.as_view(), name="buy-course"),
     path("buy/balance/", BuyCourseWithBalanceView.as_view(), name="buy-balance"),
     path("buy/midtrans/", BuyCourseMidtransInitView.as_view(), name="buy-midtrans"),
+    path("midtrans/notify/", midtrans_notification, name="midtrans-notify"),
     path("lesson/complete/", MarkLessonDoneView.as_view(), name="lesson-complete"),
     path(
         "lessons/<int:lesson_id>/questions/",

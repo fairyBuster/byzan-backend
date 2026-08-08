@@ -1,13 +1,22 @@
+import hashlib
+import json
+import logging
 import uuid
 from decimal import Decimal
 
+from django.conf import settings
 from django.db.models import Avg, Count
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 from drf_spectacular.utils import OpenApiExample, extend_schema
+from midtransclient import Snap
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+logger = logging.getLogger(__name__)
 
 from .models import (
     Course,
@@ -298,16 +307,95 @@ class BuyCourseWithBalanceView(APIView):
         )
 
 
+# ---------------------------------------------------------------------------
+# Helper: dapatkan Midtrans Snap client berdasarkan konfigurasi production/sandbox
+# ---------------------------------------------------------------------------
+def _get_midtrans_snap() -> Snap:
+    if settings.MIDTRANS_IS_PRODUCTION:
+        server_key = settings.MIDTRANS_SERVER_KEY
+    else:
+        server_key = settings.MIDTRANS_SANDBOX_SERVER_KEY
+    return Snap(
+        is_production=settings.MIDTRANS_IS_PRODUCTION,
+        server_key=server_key,
+    )
+
+
 class BuyCourseMidtransInitView(APIView):
+    """
+    Inisiasi pembelian kursus via Midtrans Snap.
+
+    Flow:
+      1. Frontend POST {course_id} ke endpoint ini.
+      2. Backend panggil Midtrans Snap API → dapatkan snap_token & redirect_url.
+      3. Backend simpan transaksi (status=pending) dan kembalikan redirect_url.
+      4. Frontend redirect user ke redirect_url (halaman pembayaran Midtrans).
+      5. Setelah user bayar, Midtrans kirim notifikasi ke /api/courses/midtrans/notify/
+    """
+
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        summary="Inisiasi pembelian via Midtrans (pending)",
+        summary="Inisiasi pembelian via Midtrans Snap",
+        description=(
+            "Membuat transaksi pending di Midtrans Snap dan mengembalikan `snap_redirect_url` "
+            "untuk redirect user ke halaman pembayaran Midtrans. "
+            "Setelah user menyelesaikan pembayaran, Midtrans akan mengirim notifikasi ke "
+            "`POST /api/courses/midtrans/notify/` untuk konfirmasi dan auto-enroll."
+        ),
         tags=["Courses"],
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "course_id": {
+                        "type": "integer",
+                        "description": "ID kursus yang ingin dibeli",
+                    },
+                },
+                "required": ["course_id"],
+            },
+        },
         examples=[
             OpenApiExample(
-                "Inisiasi Midtrans", request_only=True, value={"course_id": 1}
-            )
+                "Contoh Request",
+                request_only=True,
+                value={"course_id": 1},
+            ),
+            OpenApiExample(
+                "Contoh Response (Sukses)",
+                response_only=True,
+                status_codes=["201"],
+                value={
+                    "message": "Transaksi dibuat. Selesaikan pembayaran via Midtrans",
+                    "transaction": {
+                        "id": 15,
+                        "trx_code": "MID-A1B2C3D4E5",
+                        "course": 1,
+                        "course_title": "Belajar Django Pemula",
+                        "amount": "150000.00",
+                        "status": "pending",
+                        "provider": "midtrans",
+                        "paid_at": None,
+                        "created_at": "2026-08-09T12:30:00+07:00",
+                        "snap_redirect_url": "https://app.sandbox.midtrans.com/snap/v2/vtweb/abc123...",
+                    },
+                    "snap_token": "abc123-def456-ghi789",
+                    "snap_redirect_url": "https://app.sandbox.midtrans.com/snap/v2/vtweb/abc123...",
+                },
+            ),
+            OpenApiExample(
+                "Contoh Response (Sudah Terdaftar)",
+                response_only=True,
+                status_codes=["400"],
+                value={"error": "Sudah terdaftar di kursus ini"},
+            ),
+            OpenApiExample(
+                "Contoh Response (Kursus Tidak Ditemukan)",
+                response_only=True,
+                status_codes=["404"],
+                value={"error": "Kursus tidak ditemukan"},
+            ),
         ],
     )
     def post(self, request):
@@ -325,9 +413,46 @@ class BuyCourseMidtransInitView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        if course.price == 0:
+            return Response(
+                {
+                    "error": "Kursus ini gratis. Gunakan endpoint POST /api/courses/buy/ untuk langsung enroll.",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         order_id = f"MID-{uuid.uuid4().hex[:10].upper()}"
-        # Placeholder URL — integrasi Snap/Charge akan menggantikan ini
-        snap_url = f"https://app.midtrans.com/snap/v2/vtweb/{order_id}"
+
+        # --- Panggil Midtrans Snap API untuk dapatkan redirect_url ---
+        try:
+            snap = _get_midtrans_snap()
+            transaction_params = {
+                "transaction_details": {
+                    "order_id": order_id,
+                    "gross_amount": int(course.price),
+                },
+                "customer_details": {
+                    "first_name": request.user.full_name or request.user.username,
+                    "email": request.user.email,
+                },
+                "item_details": [
+                    {
+                        "id": str(course.id),
+                        "price": int(course.price),
+                        "quantity": 1,
+                        "name": course.title,
+                    }
+                ],
+            }
+            snap_response = snap.create_transaction(transaction_params)
+            snap_token = snap_response.get("token", "")
+            snap_redirect_url = snap_response.get("redirect_url", "")
+        except Exception as e:
+            logger.exception("Midtrans Snap API error for order %s", order_id)
+            return Response(
+                {"error": "Gagal membuat transaksi Midtrans. Silakan coba lagi."},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
 
         trx = Transaction.objects.create(
             user=request.user,
@@ -337,16 +462,108 @@ class BuyCourseMidtransInitView(APIView):
             provider="midtrans",
             trx_code=order_id,
             external_id=order_id,
-            snap_redirect_url=snap_url,
+            snap_redirect_url=snap_redirect_url,
         )
 
         return Response(
             {
-                "message": f"Transaksi dibuat. Selesaikan pembayaran via Midtrans",
+                "message": "Transaksi dibuat. Selesaikan pembayaran via Midtrans",
                 "transaction": TransactionSerializer(trx).data,
+                "snap_token": snap_token,
+                "snap_redirect_url": snap_redirect_url,
             },
             status=status.HTTP_201_CREATED,
         )
+
+
+# ---------------------------------------------------------------------------
+# Midtrans Notification Handler (Webhook)
+# ---------------------------------------------------------------------------
+@csrf_exempt
+def midtrans_notification(request):
+    """
+    Menerima notifikasi HTTP POST dari Midtrans setelah pembayaran selesai.
+
+    Flow notifikasi:
+      1. Midtrans kirim POST JSON (order_id, transaction_status, fraud_status, ...)
+      2. Kita validasi signature hash (SHA512: order_id + status_code + gross_amount + server_key)
+      3. Update status transaksi di database.
+      4. Jika status = settlement/capture → enroll user ke course.
+    """
+    if request.method != "POST":
+        return HttpResponse(status=405)
+
+    try:
+        payload = json.loads(request.body)
+    except json.JSONDecodeError:
+        return HttpResponse("Invalid JSON", status=400)
+
+    order_id = payload.get("order_id", "")
+    transaction_status = payload.get("transaction_status", "")
+    fraud_status = payload.get("fraud_status", "accept")
+    gross_amount = payload.get("gross_amount", "0.00")
+    status_code = payload.get("status_code", "200")
+    signature_key = payload.get("signature_key", "")
+
+    # --- Validasi signature key ---
+    if settings.MIDTRANS_IS_PRODUCTION:
+        server_key = settings.MIDTRANS_SERVER_KEY
+    else:
+        server_key = settings.MIDTRANS_SANDBOX_SERVER_KEY
+
+    raw = order_id + status_code + gross_amount + server_key
+    expected_signature = hashlib.sha512(raw.encode()).hexdigest()
+    if signature_key != expected_signature:
+        logger.warning(
+            "Midtrans notification: invalid signature for order %s", order_id
+        )
+        return HttpResponse("Invalid signature", status=403)
+
+    # --- Cari transaksi berdasarkan external_id (order_id) ---
+    try:
+        trx = Transaction.objects.get(provider="midtrans", external_id=order_id)
+    except Transaction.DoesNotExist:
+        logger.warning("Midtrans notification: transaction not found for %s", order_id)
+        return HttpResponse("Transaction not found", status=404)
+
+    # --- Mapping status Midtrans → status internal ---
+    # Dokumentasi Midtrans:
+    #   settlement, capture → paid
+    #   pending             → tetap pending
+    #   deny, cancel, expire, failure → failed
+    #   refund, partial_refund → refunded
+    success_statuses = {"settlement", "capture"}
+    failure_statuses = {"deny", "cancel", "expire", "failure"}
+    refund_statuses = {"refund", "partial_refund"}
+
+    if transaction_status in success_statuses and fraud_status == "accept":
+        trx.status = "paid"
+        trx.paid_at = timezone.now()
+        trx.save(update_fields=["status", "paid_at"])
+
+        # --- Enroll user ke course (jika belum) ---
+        Enrollment.objects.get_or_create(user=trx.user, course=trx.course)
+        logger.info(
+            "Midtrans payment success: order=%s user=%s course=%s",
+            order_id, trx.user.email, trx.course.title,
+        )
+
+    elif transaction_status in failure_statuses:
+        trx.status = "failed"
+        trx.save(update_fields=["status"])
+
+    elif transaction_status in refund_statuses:
+        trx.status = "refunded"
+        trx.save(update_fields=["status"])
+
+    else:
+        # pending atau status lain — tidak diubah
+        logger.info(
+            "Midtrans notification: status=%s for order=%s (no change)",
+            transaction_status, order_id,
+        )
+
+    return HttpResponse("OK", status=200)
 
 
 class MyTransactionView(APIView):

@@ -182,3 +182,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# ---------------------------------------------------------------------------
+# Midtrans Payment Gateway
+# ---------------------------------------------------------------------------
+MIDTRANS_SERVER_KEY = os.getenv("MIDTRANS_SERVER_KEY", "")
+MIDTRANS_CLIENT_KEY = os.getenv("MIDTRANS_CLIENT_KEY", "")
+MIDTRANS_MERCHANT_ID = os.getenv("MIDTRANS_MERCHANT_ID", "")
+MIDTRANS_IS_PRODUCTION = os.getenv("MIDTRANS_IS_PRODUCTION", "False").lower() in (
+    "1", "true", "yes", "on",
+)
+MIDTRANS_SANDBOX_SERVER_KEY = os.getenv("MIDTRANS_SANDBOX_SERVER_KEY", "")
+MIDTRANS_SANDBOX_CLIENT_KEY = os.getenv("MIDTRANS_SANDBOX_CLIENT_KEY", "")
