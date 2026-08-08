@@ -9,9 +9,14 @@ from rest_framework.views import APIView
 from accounts.models import User
 
 from .models import Category, Post, PostComment, PostCommentReply
-from .serializers import (CategorySerializer, PostCommentReplySerializer,
-                          PostCommentSerializer, PostDetailSerializer,
-                          PostListSerializer, PostWriteSerializer)
+from .serializers import (
+    CategorySerializer,
+    PostCommentReplySerializer,
+    PostCommentSerializer,
+    PostDetailSerializer,
+    PostListSerializer,
+    PostWriteSerializer,
+)
 
 
 class PostListView(APIView):
