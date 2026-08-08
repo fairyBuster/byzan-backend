@@ -1,19 +1,29 @@
 from django.contrib import admin
-from .models import Post, Category, PostComment, PostCommentReply
+
+from .models import Category, Post, PostComment, PostCommentReply
+
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display   = ['title', 'author', 'category', 'status', 'views_count', 'created_at']
-    list_editable  = ['status']
-    list_filter    = ['status', 'category']
-    search_fields  = ['title', 'content']
-    prepopulated_fields = {'slug': ('title',)}
-    readonly_fields = ['views_count', 'created_at', 'updated_at', 'published_at']
+    list_display = [
+        "title",
+        "author",
+        "category",
+        "status",
+        "views_count",
+        "created_at",
+    ]
+    list_editable = ["status"]
+    list_filter = ["status", "category"]
+    search_fields = ["title", "content"]
+    prepopulated_fields = {"slug": ("title",)}
+    readonly_fields = ["views_count", "created_at", "updated_at", "published_at"]
+
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug']
-    prepopulated_fields = {'slug': ('name',)}
+    list_display = ["name", "slug"]
+    prepopulated_fields = {"slug": ("name",)}
 
 
 @admin.register(PostComment)

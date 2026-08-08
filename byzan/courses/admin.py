@@ -1,5 +1,17 @@
 from django.contrib import admin
-from .models import Course, Chapter, Lesson, Transaction, Enrollment, LessonProgress, CourseCertificate, CourseReview, CourseComment, LessonQuestion
+
+from .models import (
+    Chapter,
+    Course,
+    CourseCertificate,
+    CourseComment,
+    CourseReview,
+    Enrollment,
+    Lesson,
+    LessonProgress,
+    LessonQuestion,
+    Transaction,
+)
 
 
 class ChapterInline(admin.TabularInline):
@@ -16,7 +28,14 @@ class CourseAdmin(admin.ModelAdmin):
     search_fields = ("title", "instructor__username", "instructor__email")
     ordering = ("-created_at",)
     inlines = [ChapterInline]
-    fields = ("title", "description", "thumbnail", "price", "is_published", "instructor")
+    fields = (
+        "title",
+        "description",
+        "thumbnail",
+        "price",
+        "is_published",
+        "instructor",
+    )
 
 
 class LessonInline(admin.TabularInline):
@@ -45,7 +64,15 @@ class LessonAdmin(admin.ModelAdmin):
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ("trx_code", "user", "course", "amount", "status", "paid_at", "created_at")
+    list_display = (
+        "trx_code",
+        "user",
+        "course",
+        "amount",
+        "status",
+        "paid_at",
+        "created_at",
+    )
     list_filter = ("status", "course")
     search_fields = ("trx_code", "user__email", "course__title")
     ordering = ("-created_at",)

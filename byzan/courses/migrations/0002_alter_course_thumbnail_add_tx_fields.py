@@ -10,12 +10,18 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="course",
             name="thumbnail",
-            field=models.ImageField(blank=True, null=True, upload_to="courses/thumbnails/"),
+            field=models.ImageField(
+                blank=True, null=True, upload_to="courses/thumbnails/"
+            ),
         ),
         migrations.AddField(
             model_name="transaction",
             name="provider",
-            field=models.CharField(choices=[("balance", "Balance"), ("midtrans", "Midtrans")], default="balance", max_length=20),
+            field=models.CharField(
+                choices=[("balance", "Balance"), ("midtrans", "Midtrans")],
+                default="balance",
+                max_length=20,
+            ),
         ),
         migrations.AddField(
             model_name="transaction",

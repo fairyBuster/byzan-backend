@@ -10,9 +10,19 @@ def forwards(apps, schema_editor):
     Category = apps.get_model("posts", "Category")
     Post = apps.get_model("posts", "Post")
 
-    author = User.objects.filter(is_superuser=True).first() or User.objects.filter(is_staff=True).first() or User.objects.first()
+    author = (
+        User.objects.filter(is_superuser=True).first()
+        or User.objects.filter(is_staff=True).first()
+        or User.objects.first()
+    )
     if author is None:
-        author = User(email="system@byzan.local", username="system", is_active=True, is_staff=False, is_superuser=False)
+        author = User(
+            email="system@byzan.local",
+            username="system",
+            is_active=True,
+            is_staff=False,
+            is_superuser=False,
+        )
         author.set_unusable_password()
         author.save()
 
@@ -104,4 +114,3 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(forwards, backwards),
     ]
-

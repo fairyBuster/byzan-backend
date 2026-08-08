@@ -10,7 +10,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="user",
             name="gender",
-            field=models.CharField(blank=True, choices=[("male", "Male"), ("female", "Female")], max_length=10),
+            field=models.CharField(
+                blank=True,
+                choices=[("male", "Male"), ("female", "Female")],
+                max_length=10,
+            ),
         ),
         migrations.AddField(
             model_name="user",
@@ -33,4 +37,3 @@ class Migration(migrations.Migration):
             field=models.BooleanField(default=False),
         ),
     ]
-
