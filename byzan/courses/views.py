@@ -277,11 +277,6 @@ class BuyCourseWithBalanceView(APIView):
             )
 
         user = request.user
-        if user.balance < course.price:
-            return Response(
-                {"error": "Saldo tidak mencukupi"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
         user.balance = user.balance - course.price
         user.save(update_fields=["balance"])
 
